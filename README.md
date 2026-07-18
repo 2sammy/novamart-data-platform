@@ -21,3 +21,14 @@ Enter the project directory:
 ```bat
 cd novamart-data-platform
 ```
+
+### Python Environment Setup
+
+Create and activate the virtual environment, install dependencies, and run the tests:
+
+```bash
+python -m venv .venv
+source .venv/Scripts/activate
+python -m pip install -r requirements.txt
+python -m pytest
+```
