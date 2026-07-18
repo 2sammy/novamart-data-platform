@@ -7,3 +7,17 @@ This repository contains data pipelines that collect, validate, transform, and p
 * Python
 * PostgreSQL
 * Visual Studio Code
+
+## Local Setup
+
+Clone the repository:
+
+```bat
+git clone https://github.com/2sammy/novamart-data-platform.git
+```
+
+Enter the project directory:
+
+```bat
+cd novamart-data-platform
+```
