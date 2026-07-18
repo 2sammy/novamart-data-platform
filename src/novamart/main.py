@@ -1,5 +1,7 @@
 def display_platform_status():
-    print("NovaMart data platform is running.")
+    return "NovaMart data platform is running."
 
 
-display_platform_status()
+if __name__ == "__main__":
+    status = display_platform_status()
+    print(status)
