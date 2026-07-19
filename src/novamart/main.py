@@ -1,4 +1,5 @@
 def get_platform_status(platform_name: str) -> str:
+    """Validate the platform name and return its running status."""
     if not isinstance(platform_name, str):
         raise TypeError("platform_name must be a string.")
 
