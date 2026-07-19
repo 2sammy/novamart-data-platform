@@ -1,7 +1,8 @@
 def get_platform_status(platform_name):
     if platform_name.strip() == "":
         raise ValueError("Please provide a platform name.")
-    return f"{platform_name} data platform is running."
+
+    return f"{platform_name.strip()} data platform is running."
 
 
 if __name__ == "__main__":
