@@ -39,6 +39,19 @@ def create_platform_record(platform_name: str) -> dict[str, str]:
     }
 
 
+def create_platform_records(
+    platform_names: list[str],
+) -> list[dict[str, str]]:
+    """Create structured status records for multiple data platforms."""
+    records = []
+
+    for platform_name in platform_names:
+        record = create_platform_record(platform_name)
+        records.append(record)
+
+    return records
+
+
 if __name__ == "__main__":
     status = get_platform_status("NovaMart")
     print(status)

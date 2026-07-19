@@ -1,5 +1,6 @@
 import pytest
 
+from src.novamart.main import create_platform_records
 from src.novamart.main import create_platform_record
 from src.novamart.main import get_platform_status
 from src.novamart.main import normalize_platform_name
@@ -51,3 +52,16 @@ def test_create_platform_record_rejects_non_string_name():
 
 def test_normalize_platform_name_strips_surrounding_whitespace():
     assert normalize_platform_name("  RetailHub  ") == "RetailHub"
+
+
+def test_create_platform_records():
+    assert create_platform_records(["NovaMart", "RetailHub"]) == [
+        {
+            "platform_name": "NovaMart",
+            "status": "running",
+        },
+        {
+            "platform_name": "RetailHub",
+            "status": "running",
+        },
+    ]
