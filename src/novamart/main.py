@@ -1,4 +1,4 @@
-def get_platform_status(platform_name):
+def get_platform_status(platform_name: str) -> str:
     if not isinstance(platform_name, str):
         raise TypeError("platform_name must be a string.")
 
