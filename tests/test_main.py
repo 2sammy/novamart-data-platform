@@ -36,3 +36,8 @@ def test_create_platform_record():
         "platform_name": "NovaMart",
         "status": "running",
     }
+
+
+def test_create_platform_record_rejects_whitespace_name():
+    with pytest.raises(ValueError, match="Please provide a platform name."):
+        create_platform_record("   ")

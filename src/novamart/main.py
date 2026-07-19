@@ -24,8 +24,13 @@ def get_platform_status(platform_name: str) -> str:
 
 def create_platform_record(platform_name: str) -> dict[str, str]:
     """Create a structured status record for a data platform."""
+    normalized_name = platform_name.strip()
+
+    if normalized_name == "":
+        raise ValueError("Please provide a platform name.")
+
     return {
-        "platform_name": platform_name,
+        "platform_name": normalized_name,
         "status": "running",
     }
 
