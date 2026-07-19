@@ -1,5 +1,6 @@
 import pytest
 
+from src.novamart.main import create_platform_record
 from src.novamart.main import get_platform_status
 
 
@@ -28,3 +29,10 @@ def test_get_platform_status_strips_surrounding_whitespace():
 def test_get_platform_status_rejects_non_string_name():
     with pytest.raises(TypeError, match="platform_name must be a string."):
         get_platform_status(123)
+
+
+def test_create_platform_record():
+    assert create_platform_record("NovaMart") == {
+        "platform_name": "NovaMart",
+        "status": "running",
+    }

@@ -22,6 +22,14 @@ def get_platform_status(platform_name: str) -> str:
     return f"{normalized_name} data platform is running."
 
 
+def create_platform_record(platform_name: str) -> dict[str, str]:
+    """Create a structured status record for a data platform."""
+    return {
+        "platform_name": platform_name,
+        "status": "running",
+    }
+
+
 if __name__ == "__main__":
     status = get_platform_status("NovaMart")
     print(status)
