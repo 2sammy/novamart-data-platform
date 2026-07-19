@@ -2,6 +2,7 @@ import pytest
 
 from src.novamart.main import create_platform_record
 from src.novamart.main import get_platform_status
+from src.novamart.main import normalize_platform_name
 
 
 def test_get_platform_status():
@@ -46,3 +47,7 @@ def test_create_platform_record_rejects_whitespace_name():
 def test_create_platform_record_rejects_non_string_name():
     with pytest.raises(TypeError, match="platform_name must be a string."):
         create_platform_record(123)
+
+
+def test_normalize_platform_name_strips_surrounding_whitespace():
+    assert normalize_platform_name("  RetailHub  ") == "RetailHub"
