@@ -23,3 +23,8 @@ def test_get_platform_status_rejects_whitespace_name():
 
 def test_get_platform_status_strips_surrounding_whitespace():
     assert get_platform_status(" NovaMart ") == "NovaMart data platform is running."
+
+
+def test_get_platform_status_rejects_non_string_name():
+    with pytest.raises(TypeError, match="platform_name must be a string."):
+        get_platform_status(123)
