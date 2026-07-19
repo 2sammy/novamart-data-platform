@@ -14,3 +14,8 @@ def test_get_platform_status_with_different_name():
 def test_get_platform_status_rejects_empty_name():
     with pytest.raises(ValueError, match="Please provide a platform name."):
         get_platform_status("")
+
+
+def test_get_platform_status_rejects_whitespace_name():
+    with pytest.raises(ValueError, match="Please provide a platform name."):
+        get_platform_status("   ")
