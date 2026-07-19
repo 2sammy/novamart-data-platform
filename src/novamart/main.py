@@ -1,5 +1,16 @@
 def get_platform_status(platform_name: str) -> str:
-    """Validate the platform name and return its running status."""
+    """Validate a platform name and return its running status.
+
+    Args:
+        platform_name: The name of the data platform.
+
+    Returns:
+        A message indicating that the data platform is running.
+
+    Raises:
+        TypeError: If platform_name is not a string.
+        ValueError: If platform_name is empty or contains only whitespace.
+    """
     if not isinstance(platform_name, str):
         raise TypeError("platform_name must be a string.")
 
