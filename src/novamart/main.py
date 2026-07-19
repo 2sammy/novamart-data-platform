@@ -24,6 +24,9 @@ def get_platform_status(platform_name: str) -> str:
 
 def create_platform_record(platform_name: str) -> dict[str, str]:
     """Create a structured status record for a data platform."""
+    if not isinstance(platform_name, str):
+        raise TypeError("platform_name must be a string.")
+
     normalized_name = platform_name.strip()
 
     if normalized_name == "":

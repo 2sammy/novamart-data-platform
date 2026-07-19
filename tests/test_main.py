@@ -41,3 +41,8 @@ def test_create_platform_record():
 def test_create_platform_record_rejects_whitespace_name():
     with pytest.raises(ValueError, match="Please provide a platform name."):
         create_platform_record("   ")
+
+
+def test_create_platform_record_rejects_non_string_name():
+    with pytest.raises(TypeError, match="platform_name must be a string."):
+        create_platform_record(123)
