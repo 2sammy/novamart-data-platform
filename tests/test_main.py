@@ -81,3 +81,11 @@ def test_create_platform_records_rejects_non_list_input():
         match="platform_names must be a list.",
     ):
         create_platform_records("NovaMart")
+
+
+def test_create_platform_records_rejects_empty_list():
+    with pytest.raises(
+        ValueError,
+        match="platform_names must not be empty.",
+    ):
+        create_platform_records([])

@@ -46,6 +46,9 @@ def create_platform_records(
     if not isinstance(platform_names, list):
         raise TypeError("platform_names must be a list.")
 
+    if not platform_names:
+        raise ValueError("platform_names must not be empty.")
+
     records = []
 
     for platform_name in platform_names:
