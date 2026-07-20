@@ -65,3 +65,11 @@ def test_create_platform_records():
             "status": "running",
         },
     ]
+
+
+def test_create_platform_records_rejects_invalid_name():
+    with pytest.raises(
+        ValueError,
+        match="Please provide a platform name.",
+    ):
+        create_platform_records(["NovaMart", "   ", "RetailHub"])
