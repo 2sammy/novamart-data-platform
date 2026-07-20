@@ -73,3 +73,11 @@ def test_create_platform_records_rejects_invalid_name():
         match="Please provide a platform name.",
     ):
         create_platform_records(["NovaMart", "   ", "RetailHub"])
+
+
+def test_create_platform_records_rejects_non_list_input():
+    with pytest.raises(
+        TypeError,
+        match="platform_names must be a list.",
+    ):
+        create_platform_records("NovaMart")

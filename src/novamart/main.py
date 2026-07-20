@@ -43,6 +43,9 @@ def create_platform_records(
     platform_names: list[str],
 ) -> list[dict[str, str]]:
     """Create structured status records for multiple data platforms."""
+    if not isinstance(platform_names, list):
+        raise TypeError("platform_names must be a list.")
+
     records = []
 
     for platform_name in platform_names:
