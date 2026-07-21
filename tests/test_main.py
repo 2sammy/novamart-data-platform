@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 import pytest
@@ -7,6 +8,7 @@ from src.novamart.main import create_platform_record
 from src.novamart.main import create_platform_records
 from src.novamart.main import get_platform_status
 from src.novamart.main import normalize_platform_name
+from src.novamart.main import save_platform_batch
 
 
 def test_get_platform_status():
@@ -152,3 +154,38 @@ def test_create_platform_batch_returns_valid_utc_timestamp():
 
     # Confirm that the timestamp includes UTC timezone information.
     assert processed_at.utcoffset().total_seconds() == 0
+
+
+def test_save_platform_batch_writes_valid_json_file(tmp_path):
+    """Verify that a platform batch is saved as valid JSON."""
+
+    # Create a temporary file path that pytest will remove automatically.
+    output_path = tmp_path / "platform_batch.json"
+
+    # Save a valid platform batch to the temporary JSON file.
+    save_platform_batch(
+        ["NovaMart", "RetailHub"],
+        str(output_path),
+    )
+
+    # Open the saved file and convert its JSON content back to Python data.
+    with output_path.open("r", encoding="utf-8") as input_file:
+        saved_batch = json.load(input_file)
+
+    # Confirm that the saved metadata reports two processed records.
+    assert saved_batch["record_count"] == 2
+
+    # Confirm that the saved records contain the expected platform data.
+    assert saved_batch["records"] == [
+        {
+            "platform_name": "NovaMart",
+            "status": "running",
+        },
+        {
+            "platform_name": "RetailHub",
+            "status": "running",
+        },
+    ]
+
+    # Confirm that the JSON file contains a processing timestamp.
+    assert "processed_at" in saved_batch
