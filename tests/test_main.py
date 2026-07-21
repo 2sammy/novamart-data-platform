@@ -7,6 +7,7 @@ from src.novamart.main import create_platform_batch
 from src.novamart.main import create_platform_record
 from src.novamart.main import create_platform_records
 from src.novamart.main import get_platform_status
+from src.novamart.main import load_platform_batch
 from src.novamart.main import normalize_platform_name
 from src.novamart.main import save_platform_batch
 
@@ -189,3 +190,32 @@ def test_save_platform_batch_writes_valid_json_file(tmp_path):
 
     # Confirm that the JSON file contains a processing timestamp.
     assert "processed_at" in saved_batch
+
+
+def test_load_platform_batch_reads_valid_json_file(tmp_path):
+    """Verify that a saved JSON batch is loaded as Python data."""
+
+    # Create a temporary JSON file path.
+    input_path = tmp_path / "platform_batch.json"
+
+    # Prepare known JSON data so we can verify the loaded result.
+    expected_batch = {
+        "record_count": 1,
+        "processed_at": "2026-07-21T12:00:00+00:00",
+        "records": [
+            {
+                "platform_name": "NovaMart",
+                "status": "running",
+            }
+        ],
+    }
+
+    # Write the known batch into the temporary JSON file.
+    with input_path.open("w", encoding="utf-8") as output_file:
+        json.dump(expected_batch, output_file, indent=4)
+
+    # Load the JSON file using the production function.
+    loaded_batch = load_platform_batch(str(input_path))
+
+    # Confirm that the loaded Python data matches the saved JSON data.
+    assert loaded_batch == expected_batch

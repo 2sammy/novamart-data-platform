@@ -140,6 +140,46 @@ def save_platform_batch(
         json.dump(batch, output_file, indent=4)
 
 
+def load_platform_batch(
+    input_path: str,
+) -> dict:
+    """Load a platform batch from a JSON file.
+
+    Args:
+        input_path: The path of the JSON file to load.
+
+    Returns:
+        The platform batch converted into a Python dictionary.
+
+    Raises:
+        TypeError: If input_path is not a string.
+        ValueError: If input_path is empty.
+        FileNotFoundError: If the JSON file does not exist.
+    """
+    if not isinstance(input_path, str):
+        raise TypeError("input_path must be a string.")
+
+    normalized_path = input_path.strip()
+
+    if normalized_path == "":
+        raise ValueError("input_path must not be empty.")
+
+    # Convert the supplied string path into a Path object.
+    source = Path(normalized_path)
+
+    # Stop with a clear error before trying to open a missing file.
+    if not source.exists():
+        raise FileNotFoundError(
+            f"Input file does not exist: {normalized_path}"
+        )
+
+    # Open the JSON file and convert its content into Python data.
+    with source.open("r", encoding="utf-8") as input_file:
+        batch = json.load(input_file)
+
+    return batch
+
+
 if __name__ == "__main__":
     status = get_platform_status("NovaMart")
     print(status)
