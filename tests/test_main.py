@@ -9,6 +9,7 @@ from src.novamart.main import create_platform_records
 from src.novamart.main import get_platform_status
 from src.novamart.main import load_platform_batch
 from src.novamart.main import normalize_platform_name
+from src.novamart.main import run_platform_pipeline
 from src.novamart.main import save_platform_batch
 
 
@@ -239,3 +240,37 @@ def test_load_platform_batch_rejects_invalid_json(tmp_path):
         match="Input file contains invalid JSON",
     ):
         load_platform_batch(str(input_path))
+
+
+def test_run_platform_pipeline_saves_and_loads_batch(tmp_path):
+    """Verify that the complete pipeline persists and reloads the batch."""
+
+    # Create a temporary destination for the pipeline output.
+    output_path = tmp_path / "pipeline_batch.json"
+
+    # Run the complete workflow: validate, save, load, and return.
+    result = run_platform_pipeline(
+        ["NovaMart", "RetailHub"],
+        str(output_path),
+    )
+
+    # Confirm that the pipeline created the JSON file on disk.
+    assert output_path.exists()
+
+    # Confirm that the reloaded batch reports the correct record count.
+    assert result["record_count"] == 2
+
+    # Confirm that the returned records came through the full pipeline.
+    assert result["records"] == [
+        {
+            "platform_name": "NovaMart",
+            "status": "running",
+        },
+        {
+            "platform_name": "RetailHub",
+            "status": "running",
+        },
+    ]
+
+    # Confirm that batch metadata was preserved during save and reload.
+    assert "processed_at" in result

@@ -190,6 +190,34 @@ def load_platform_batch(
     return batch
 
 
+def run_platform_pipeline(
+    platform_names: list[str],
+    output_path: str,
+) -> dict:
+    """Run the complete platform batch pipeline.
+
+    Args:
+        platform_names: A non-empty list of unique platform names.
+        output_path: The JSON file path where the batch will be saved.
+
+    Returns:
+        The platform batch loaded back from the saved JSON file.
+
+    Raises:
+        TypeError: If the platform names or file path have invalid types.
+        ValueError: If the supplied data is invalid or JSON is corrupted.
+        FileNotFoundError: If the saved JSON file cannot be found.
+    """
+    # Validate, transform, and save the platform batch to disk.
+    save_platform_batch(platform_names, output_path)
+
+    # Load the saved file to confirm that persistence succeeded.
+    loaded_batch = load_platform_batch(output_path)
+
+    # Return the data that was actually stored on disk.
+    return loaded_batch
+
+
 if __name__ == "__main__":
     status = get_platform_status("NovaMart")
     print(status)
