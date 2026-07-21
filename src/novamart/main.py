@@ -54,14 +54,16 @@ def create_platform_records(
 
     for platform_name in platform_names:
         record = create_platform_record(platform_name)
-        normalized_name = record["platform_name"]
 
-        if normalized_name in seen_names:
+        normalized_name = record["platform_name"]
+        comparison_name = normalized_name.lower()
+
+        if comparison_name in seen_names:
             raise ValueError(
                 "platform_names must not contain duplicates."
             )
 
-        seen_names.add(normalized_name)
+        seen_names.add(comparison_name)
         records.append(record)
 
     return records

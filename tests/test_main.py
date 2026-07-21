@@ -99,3 +99,13 @@ def test_create_platform_records_rejects_duplicate_names():
         create_platform_records(
             ["NovaMart", "  NovaMart  ", "RetailHub"]
         )
+
+
+def test_create_platform_records_rejects_case_insensitive_duplicates():
+    with pytest.raises(
+        ValueError,
+        match="platform_names must not contain duplicates.",
+    ):
+        create_platform_records(
+            ["NovaMart", "novamart", "RetailHub"]
+        )
