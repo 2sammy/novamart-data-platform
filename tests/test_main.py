@@ -219,3 +219,23 @@ def test_load_platform_batch_reads_valid_json_file(tmp_path):
 
     # Confirm that the loaded Python data matches the saved JSON data.
     assert loaded_batch == expected_batch
+
+
+def test_load_platform_batch_rejects_invalid_json(tmp_path):
+    """Verify that malformed JSON causes the pipeline to stop."""
+
+    # Create a temporary path for a deliberately corrupted JSON file.
+    input_path = tmp_path / "corrupted_batch.json"
+
+    # Write incomplete JSON that cannot be converted into Python data.
+    input_path.write_text(
+        '{"record_count": 2, "records":',
+        encoding="utf-8",
+    )
+
+    # Confirm that the loader stops with a clear validation error.
+    with pytest.raises(
+        ValueError,
+        match="Input file contains invalid JSON",
+    ):
+        load_platform_batch(str(input_path))

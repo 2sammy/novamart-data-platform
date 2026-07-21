@@ -143,40 +143,50 @@ def save_platform_batch(
 def load_platform_batch(
     input_path: str,
 ) -> dict:
-    """Load a platform batch from a JSON file.
+    """Load and return a platform batch from a valid JSON file.
 
     Args:
         input_path: The path of the JSON file to load.
 
     Returns:
-        The platform batch converted into a Python dictionary.
+        The JSON content converted into a Python dictionary.
 
     Raises:
         TypeError: If input_path is not a string.
-        ValueError: If input_path is empty.
-        FileNotFoundError: If the JSON file does not exist.
+        ValueError: If input_path is empty or the file contains invalid JSON.
+        FileNotFoundError: If the specified file does not exist.
     """
+    # Reject values such as numbers, lists, or None.
     if not isinstance(input_path, str):
         raise TypeError("input_path must be a string.")
 
+    # Remove accidental spaces around the supplied path.
     normalized_path = input_path.strip()
 
+    # Reject an empty path because there is no file to load.
     if normalized_path == "":
         raise ValueError("input_path must not be empty.")
 
-    # Convert the supplied string path into a Path object.
+    # Convert the cleaned string into a Path object for file operations.
     source = Path(normalized_path)
 
-    # Stop with a clear error before trying to open a missing file.
+    # Stop before opening the file if it does not exist.
     if not source.exists():
         raise FileNotFoundError(
             f"Input file does not exist: {normalized_path}"
         )
 
-    # Open the JSON file and convert its content into Python data.
-    with source.open("r", encoding="utf-8") as input_file:
-        batch = json.load(input_file)
+    # Attempt to open the file and convert its JSON into Python data.
+    try:
+        with source.open("r", encoding="utf-8") as input_file:
+            batch = json.load(input_file)
+    except json.JSONDecodeError as error:
+        # Stop because malformed or incomplete JSON cannot be trusted.
+        raise ValueError(
+            f"Input file contains invalid JSON: {normalized_path}"
+        ) from error
 
+    # Return the successfully loaded Python dictionary.
     return batch
 
 
