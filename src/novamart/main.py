@@ -50,9 +50,18 @@ def create_platform_records(
         raise ValueError("platform_names must not be empty.")
 
     records = []
+    seen_names = set()
 
     for platform_name in platform_names:
         record = create_platform_record(platform_name)
+        normalized_name = record["platform_name"]
+
+        if normalized_name in seen_names:
+            raise ValueError(
+                "platform_names must not contain duplicates."
+            )
+
+        seen_names.add(normalized_name)
         records.append(record)
 
     return records

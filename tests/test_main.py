@@ -89,3 +89,13 @@ def test_create_platform_records_rejects_empty_list():
         match="platform_names must not be empty.",
     ):
         create_platform_records([])
+
+
+def test_create_platform_records_rejects_duplicate_names():
+    with pytest.raises(
+        ValueError,
+        match="platform_names must not contain duplicates.",
+    ):
+        create_platform_records(
+            ["NovaMart", "  NovaMart  ", "RetailHub"]
+        )
