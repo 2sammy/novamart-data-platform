@@ -1,7 +1,8 @@
 import pytest
 
-from src.novamart.main import create_platform_records
+from src.novamart.main import create_platform_batch
 from src.novamart.main import create_platform_record
+from src.novamart.main import create_platform_records
 from src.novamart.main import get_platform_status
 from src.novamart.main import normalize_platform_name
 
@@ -109,3 +110,30 @@ def test_create_platform_records_rejects_case_insensitive_duplicates():
         create_platform_records(
             ["NovaMart", "novamart", "RetailHub"]
         )
+
+
+def test_create_platform_batch_returns_records_and_count():
+    """Verify that batch metadata contains the correct count and records."""
+
+    # Arrange and Act:
+    # Send two valid platform names to the batch-summary function.
+    result = create_platform_batch(
+        ["NovaMart", "RetailHub"]
+    )
+
+    # Assert:
+    # Confirm that the reported count matches the two processed records.
+    assert result["record_count"] == 2
+
+    # Confirm that the returned records contain the expected
+    # normalized platform names and running statuses.
+    assert result["records"] == [
+        {
+            "platform_name": "NovaMart",
+            "status": "running",
+        },
+        {
+            "platform_name": "RetailHub",
+            "status": "running",
+        },
+    ]

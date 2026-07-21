@@ -69,6 +69,35 @@ def create_platform_records(
     return records
 
 
+def create_platform_batch(
+    platform_names: list[str],
+) -> dict[str, int | list[dict[str, str]]]:
+    """Create platform records together with batch metadata.
+
+    Args:
+        platform_names: A non-empty list of unique platform names.
+
+    Returns:
+        A dictionary containing the number of processed records
+        and the completed platform records.
+
+    Raises:
+        TypeError: If platform_names is not a list or contains
+            a non-string value.
+        ValueError: If the list is empty, contains a blank name,
+            or contains duplicate names.
+    """
+    # Reuse the existing batch function so all validation rules
+    # remain in one place.
+    records = create_platform_records(platform_names)
+
+    # Return both the processed records and their total count.
+    return {
+        "record_count": len(records),
+        "records": records,
+    }
+
+
 if __name__ == "__main__":
     status = get_platform_status("NovaMart")
     print(status)
