@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from src.novamart.main import create_platform_batch
@@ -137,3 +139,16 @@ def test_create_platform_batch_returns_records_and_count():
             "status": "running",
         },
     ]
+
+
+def test_create_platform_batch_returns_valid_utc_timestamp():
+    """Verify that the batch contains a valid UTC processing timestamp."""
+
+    # Create a valid batch so the function generates processed_at.
+    result = create_platform_batch(["NovaMart"])
+
+    # Convert the ISO timestamp string back into a datetime object.
+    processed_at = datetime.fromisoformat(result["processed_at"])
+
+    # Confirm that the timestamp includes UTC timezone information.
+    assert processed_at.utcoffset().total_seconds() == 0

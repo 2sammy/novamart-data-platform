@@ -1,3 +1,6 @@
+from datetime import UTC, datetime
+
+
 def normalize_platform_name(platform_name: str) -> str:
     """Validate and normalize a data platform name."""
     if not isinstance(platform_name, str):
@@ -71,15 +74,15 @@ def create_platform_records(
 
 def create_platform_batch(
     platform_names: list[str],
-) -> dict[str, int | list[dict[str, str]]]:
+) -> dict[str, int | str | list[dict[str, str]]]:
     """Create platform records together with batch metadata.
 
     Args:
         platform_names: A non-empty list of unique platform names.
 
     Returns:
-        A dictionary containing the number of processed records
-        and the completed platform records.
+        A dictionary containing the processing timestamp, number of
+        processed records, and the completed platform records.
 
     Raises:
         TypeError: If platform_names is not a list or contains
@@ -87,13 +90,16 @@ def create_platform_batch(
         ValueError: If the list is empty, contains a blank name,
             or contains duplicate names.
     """
-    # Reuse the existing batch function so all validation rules
-    # remain in one place.
+    # Reuse the existing function so validation remains in one place.
     records = create_platform_records(platform_names)
 
-    # Return both the processed records and their total count.
+    # Capture the exact time when this batch was processed in UTC.
+    processed_at = datetime.now(UTC).isoformat()
+
+    # Return the processing metadata together with the records.
     return {
         "record_count": len(records),
+        "processed_at": processed_at,
         "records": records,
     }
 
