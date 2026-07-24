@@ -283,6 +283,34 @@ def run_platform_pipeline(
     return loaded_batch
 
 
+def run_csv_platform_pipeline(
+    input_path: str,
+    output_path: str,
+) -> dict:
+    """Run the complete CSV-to-JSON platform pipeline.
+
+    Args:
+        input_path: The path of the source CSV file.
+        output_path: The path where the JSON batch will be saved.
+
+    Returns:
+        The platform batch loaded back from the saved JSON file.
+
+    Raises:
+        TypeError: If an input or output path has an invalid type.
+        ValueError: If the CSV data, platform data, or path is invalid.
+        FileNotFoundError: If the source CSV file cannot be found.
+    """
+    # Extract the raw platform names from the source CSV file.
+    platform_names = load_platform_names_from_csv(input_path)
+
+    # Validate, normalize, transform, save, reload, and return the batch.
+    return run_platform_pipeline(
+        platform_names,
+        output_path,
+    )
+
+
 if __name__ == "__main__":
     status = get_platform_status("NovaMart")
     print(status)

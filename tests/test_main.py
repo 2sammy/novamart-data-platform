@@ -10,6 +10,7 @@ from src.novamart.main import get_platform_status
 from src.novamart.main import load_platform_batch
 from src.novamart.main import load_platform_names_from_csv
 from src.novamart.main import normalize_platform_name
+from src.novamart.main import run_csv_platform_pipeline
 from src.novamart.main import run_platform_pipeline
 from src.novamart.main import save_platform_batch
 
@@ -343,3 +344,46 @@ def test_load_platform_names_from_csv_rejects_invalid_csv(tmp_path):
         match="Input file contains invalid CSV",
     ):
         load_platform_names_from_csv(str(input_path))
+
+
+def test_run_csv_platform_pipeline_processes_csv_to_json(tmp_path):
+    """Verify that the complete CSV-to-JSON pipeline works successfully."""
+
+    # Create temporary paths for the source CSV and destination JSON files.
+    input_path = tmp_path / "platforms.csv"
+    output_path = tmp_path / "platform_batch.json"
+
+    # Write raw platform names into the temporary CSV file.
+    input_path.write_text(
+        "platform_name\n"
+        " NovaMart \n"
+        "RetailHub\n",
+        encoding="utf-8",
+    )
+
+    # Run the full CSV extraction, transformation, and loading workflow.
+    result = run_csv_platform_pipeline(
+        str(input_path),
+        str(output_path),
+    )
+
+    # Confirm that the pipeline created the destination JSON file.
+    assert output_path.exists()
+
+    # Confirm that both CSV rows were processed.
+    assert result["record_count"] == 2
+
+    # Confirm that the pipeline normalized the raw CSV values.
+    assert result["records"] == [
+        {
+            "platform_name": "NovaMart",
+            "status": "running",
+        },
+        {
+            "platform_name": "RetailHub",
+            "status": "running",
+        },
+    ]
+
+    # Confirm that the processing timestamp survived persistence and reload.
+    assert "processed_at" in result
