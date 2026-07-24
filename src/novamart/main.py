@@ -16,7 +16,7 @@ def load_platform_names_from_csv(input_path: str) -> list[str]:
     Raises:
         TypeError: If input_path is not a string.
         ValueError: If input_path is empty, the expected column is missing,
-            or the CSV file is malformed.
+            the CSV contains no data rows, or the file is malformed.
         FileNotFoundError: If the CSV file does not exist.
     """
     # Reject values such as integers, lists, or None.
@@ -55,11 +55,20 @@ def load_platform_names_from_csv(input_path: str) -> list[str]:
                     "CSV file must contain a platform_name column."
                 )
 
-            # Return raw values and allow the existing pipeline to validate them.
-            return [
+            # Read every value from the platform_name CSV column.
+            platform_names = [
                 row["platform_name"]
                 for row in reader
             ]
+
+            # Check whether the CSV contained any data rows.
+            if not platform_names:
+                raise ValueError(
+                    "CSV file must contain at least one platform record."
+                )
+
+            # Return the platform names when the CSV contains data.
+            return platform_names
 
     except csv.Error as error:
         # Convert low-level CSV parsing errors into a clearer pipeline error.

@@ -387,3 +387,23 @@ def test_run_csv_platform_pipeline_processes_csv_to_json(tmp_path):
 
     # Confirm that the processing timestamp survived persistence and reload.
     assert "processed_at" in result
+
+
+def test_load_platform_names_from_csv_rejects_header_only_file(tmp_path):
+    """Verify that a CSV with no data rows is rejected."""
+
+    # Create a temporary path for the CSV test file.
+    input_path = tmp_path / "empty_platforms.csv"
+
+    # Create a CSV containing the correct header but no platform records.
+    input_path.write_text(
+        "platform_name\n",
+        encoding="utf-8",
+    )
+
+    # Confirm that the CSV reader rejects a file with no data rows.
+    with pytest.raises(
+        ValueError,
+        match="CSV file must contain at least one platform record.",
+    ):
+        load_platform_names_from_csv(str(input_path))
