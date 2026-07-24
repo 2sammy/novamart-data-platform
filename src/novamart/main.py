@@ -1,6 +1,71 @@
+import csv
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+
+
+def load_platform_names_from_csv(input_path: str) -> list[str]:
+    """Read and return raw platform names from a CSV file.
+
+    Args:
+        input_path: The path of the CSV file to read.
+
+    Returns:
+        A list containing the raw platform names from the CSV file.
+
+    Raises:
+        TypeError: If input_path is not a string.
+        ValueError: If input_path is empty, the expected column is missing,
+            or the CSV file is malformed.
+        FileNotFoundError: If the CSV file does not exist.
+    """
+    # Reject values such as integers, lists, or None.
+    if not isinstance(input_path, str):
+        raise TypeError("input_path must be a string.")
+
+    # Remove accidental whitespace around the supplied path.
+    normalized_path = input_path.strip()
+
+    # Reject an empty path because no CSV file can be located.
+    if normalized_path == "":
+        raise ValueError("input_path must not be empty.")
+
+    # Convert the cleaned path string into a Path object.
+    source = Path(normalized_path)
+
+    # Stop immediately when the requested CSV file does not exist.
+    if not source.exists():
+        raise FileNotFoundError(
+            f"Input file does not exist: {normalized_path}"
+        )
+
+    try:
+        # newline="" allows Python's CSV module to handle line endings safely.
+        with source.open(
+            "r",
+            encoding="utf-8",
+            newline="",
+        ) as input_file:
+            # DictReader uses the first CSV row as the column headers.
+            reader = csv.DictReader(input_file, strict=True)
+
+            # Confirm that the CSV contains the column required by the pipeline.
+            if reader.fieldnames is None or "platform_name" not in reader.fieldnames:
+                raise ValueError(
+                    "CSV file must contain a platform_name column."
+                )
+
+            # Return raw values and allow the existing pipeline to validate them.
+            return [
+                row["platform_name"]
+                for row in reader
+            ]
+
+    except csv.Error as error:
+        # Convert low-level CSV parsing errors into a clearer pipeline error.
+        raise ValueError(
+            f"Input file contains invalid CSV: {normalized_path}"
+        ) from error
 
 
 def normalize_platform_name(platform_name: str) -> str:

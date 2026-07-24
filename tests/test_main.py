@@ -8,6 +8,7 @@ from src.novamart.main import create_platform_record
 from src.novamart.main import create_platform_records
 from src.novamart.main import get_platform_status
 from src.novamart.main import load_platform_batch
+from src.novamart.main import load_platform_names_from_csv
 from src.novamart.main import normalize_platform_name
 from src.novamart.main import run_platform_pipeline
 from src.novamart.main import save_platform_batch
@@ -274,3 +275,71 @@ def test_run_platform_pipeline_saves_and_loads_batch(tmp_path):
 
     # Confirm that batch metadata was preserved during save and reload.
     assert "processed_at" in result
+
+
+def test_load_platform_names_from_csv_reads_raw_names(tmp_path):
+    """Verify that the CSV reader returns raw platform-name values."""
+
+    # Create a temporary CSV file that pytest will remove automatically.
+    input_path = tmp_path / "platforms.csv"
+
+    # Write a header and two platform-name rows into the CSV file.
+    input_path.write_text(
+        "platform_name\n"
+        " NovaMart \n"
+        "RetailHub\n",
+        encoding="utf-8",
+    )
+
+    # Read the platform names using the production CSV function.
+    result = load_platform_names_from_csv(str(input_path))
+
+    # Confirm that the reader returns raw values without normalization.
+    assert result == [
+        " NovaMart ",
+        "RetailHub",
+    ]
+
+
+def test_load_platform_names_from_csv_rejects_missing_column(tmp_path):
+    """Verify that a CSV without platform_name is rejected."""
+
+    # Create a temporary path for a CSV with the wrong header.
+    input_path = tmp_path / "platforms.csv"
+
+    # Write a CSV that does not contain the required platform_name column.
+    input_path.write_text(
+        "name\n"
+        "NovaMart\n"
+        "RetailHub\n",
+        encoding="utf-8",
+    )
+
+    # Confirm that the CSV reader stops with a clear validation error.
+    with pytest.raises(
+        ValueError,
+        match="CSV file must contain a platform_name column.",
+    ):
+        load_platform_names_from_csv(str(input_path))
+
+
+def test_load_platform_names_from_csv_rejects_invalid_csv(tmp_path):
+    """Verify that malformed CSV content stops the ingestion process."""
+
+    # Create a temporary path for a deliberately malformed CSV file.
+    input_path = tmp_path / "invalid_platforms.csv"
+
+    # Write an opening quotation mark without a matching closing mark.
+    input_path.write_text(
+        "platform_name\n"
+        '"NovaMart\n'
+        "RetailHub\n",
+        encoding="utf-8",
+    )
+
+    # Confirm that the low-level CSV error becomes a clear pipeline error.
+    with pytest.raises(
+        ValueError,
+        match="Input file contains invalid CSV",
+    ):
+        load_platform_names_from_csv(str(input_path))
